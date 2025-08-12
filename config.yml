@@ -1,0 +1,8 @@
+
+products:
+  - url: "https://example.com/products/sku-ABC"
+    sku_selector: "[data-test=sku], .sku"
+    price_selector: "[data-test=price], .price"
+  - url: "https://example.com/products/sku-XYZ"
+    sku_selector: "[data-test=sku], .sku"
+    price_selector: "[data-test=price], .price"
