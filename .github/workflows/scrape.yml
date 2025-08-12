@@ -1,0 +1,41 @@
+name: Nightly price scrape
+
+on:
+  schedule:
+    # Runs daily at 8:05 AM US/Eastern ≈ 12:05 UTC during EDT
+    - cron: '5 12 * * *'
+  workflow_dispatch: {}  # allow manual runs
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    env:
+      SITE_USER: ${{ secrets.SITE_USER }}
+      SITE_PASS: ${{ secrets.SITE_PASS }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # Install Playwright browser + OS deps
+          python -m playwright install --with-deps chromium
+
+      - name: Run scraper
+        run: |
+          python scrape.py > results.json
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pricebot-results
+          path: results.json
